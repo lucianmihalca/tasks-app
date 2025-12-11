@@ -1,12 +1,13 @@
 <script setup lang="ts">
   import { ref } from 'vue'
-
-  const message = ref('Hellou World')
+  import TaskForm from '@/components/TaskForm.vue'
+  const message = ref('Task App')
 </script>
 
 <template>
   <main>
     <h1>{{ message }}</h1>
+    <TaskForm />
   </main>
 </template>
 
