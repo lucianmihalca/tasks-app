@@ -1,7 +1,9 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import TaskForm from '@/components/TaskForm.vue'
+
   import type { Task } from './types'
+  import TaskList from '@/components/TaskList.vue'
 
   const message = ref('Task App')
   const tasks = ref<Task[]>([])
@@ -19,7 +21,7 @@
   <main>
     <h1>{{ message }}</h1>
     <TaskForm @add-task="addTask" />
-    <h3>Ther are {{ tasks.length }} tasks</h3>
+    <TaskList :tasks="tasks" />
   </main>
 </template>
 

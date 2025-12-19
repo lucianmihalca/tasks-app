@@ -26,6 +26,7 @@
         name="newTask"
         v-model="newTask"
         :aria-invalid="!!error || undefined"
+        @input="error = ''"
       />
       <small
         v-if="error"
@@ -44,5 +45,6 @@
   .button-container {
     display: flex;
     justify-content: end;
+    margin-bottom: 1rem;
   }
 </style>
