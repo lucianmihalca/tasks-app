@@ -2,43 +2,15 @@
   import { computed, ref } from 'vue'
   import TaskForm from '@/components/TaskForm.vue'
 
-  import type { Task, TaskFilter } from './types'
+  import type { TaskFilter } from './types'
   import TaskList from '@/components/TaskList.vue'
   import FilterButton from '@/components/FilterButton.vue'
+  import { useTasks } from '@/composables/useTasks'
 
   const message = ref('Task App')
-  const tasks = ref<Task[]>([])
   const filter = ref<TaskFilter>('all')
 
-  const addTask = (newTask: string) => {
-    tasks.value.push({
-      id: crypto.randomUUID(),
-      title: newTask,
-      done: false,
-    })
-  }
-
-  const toggleDone = (id: string) => {
-    const task = tasks.value.find((task) => task.id === id)
-    if (task) {
-      task.done = !task.done
-    }
-  }
-
-  const removeTask = (id: string) => {
-    const index = tasks.value.findIndex((task) => task.id === id)
-    if (index !== -1) {
-      tasks.value.splice(index, 1)
-    }
-  }
-
-  const totalDone = computed(() => {
-    // Opción 1: con reduce
-    // return tasks.value.reduce((total, task) => (task.done ? total + 1 : total), 0)
-
-    // Opción 2: con filter
-    return tasks.value.filter((task) => task.done).length
-  })
+  const { tasks, addTask, toggleDone, removeTask, totalDone } = useTasks()
 
   const filterTasks = computed(() => {
     switch (filter.value) {
@@ -48,8 +20,9 @@
         return tasks.value.filter((task) => task.done)
       case 'todo':
         return tasks.value.filter((task) => !task.done)
+      default:
+        return tasks.value
     }
-    return tasks.value
   })
 
   const setFilter = (value: TaskFilter) => {
