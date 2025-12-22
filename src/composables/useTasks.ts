@@ -35,6 +35,13 @@ export function useTasks() {
     return tasks.value.filter((task) => task.done).length
   })
 
+  const editTask = (id: string, newTitle: string) => {
+    const task = tasks.value.find((task) => task.id === id)
+    if (task) {
+      task.title = newTitle
+    }
+  }
+
   // Persistencia
   onMounted(() => {
     try {
@@ -65,5 +72,6 @@ export function useTasks() {
     toggleDone,
     removeTask,
     totalDone,
+    editTask,
   }
 }

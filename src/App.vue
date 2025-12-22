@@ -10,7 +10,7 @@
   const message = ref('Task App')
   const filter = ref<TaskFilter>('all')
 
-  const { tasks, addTask, toggleDone, removeTask, totalDone } = useTasks()
+  const { tasks, addTask, toggleDone, removeTask, totalDone, editTask } = useTasks()
 
   const filterTasks = computed(() => {
     switch (filter.value) {
@@ -60,6 +60,7 @@
       :tasks="filterTasks"
       @toggle-done="toggleDone"
       @remove-task="removeTask"
+      @edit-task="editTask"
     />
   </main>
 </template>
