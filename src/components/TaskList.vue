@@ -42,6 +42,10 @@
     editingId.value = null
     editText.value = ''
   }
+
+  const vFocus = {
+    mounted: (el: HTMLInputElement) => el.focus(),
+  }
 </script>
 
 <template>
@@ -54,7 +58,10 @@
       :key="task.id"
       class="task"
     >
-      <label v-if="!isEditing(task.id)">
+      <div
+        v-if="!isEditing(task.id)"
+        class="task-content"
+      >
         <input
           type="checkbox"
           :checked="task.done"
@@ -68,16 +75,16 @@
         >
           {{ task.title }}
         </span>
-      </label>
+      </div>
       <!-- Modo edición -->
       <input
         v-else
+        v-focus
         v-model="editText"
         @blur="saveEditing(task.id)"
         @keyup.enter="saveEditing(task.id)"
         @keyup.escape="cancelEdit"
         class="edit-input"
-        autofocus
       />
       <button
         @click="emits('removeTask', task.id)"
@@ -99,8 +106,17 @@
     align-items: center;
     gap: 1rem;
   }
+  .task-text {
+    flex-grow: 1;
+    cursor: pointer;
+  }
   .edit-input {
     margin: 0;
+  }
+  .task-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
   }
 
   .task-list-enter-active,
