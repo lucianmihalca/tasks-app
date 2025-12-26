@@ -11,6 +11,7 @@ tareas de forma intuitiva con una interfaz minimalista y responsiva.
 ## ✨ Características
 
 - ✅ **Crear tareas** nuevas mediante un formulario validado
+- ✏️ **Editar tareas** existentes con doble clic y autofocus
 - 🔄 **Marcar tareas** como completadas o pendientes con un simple clic
 - 🗑️ **Eliminar tareas** individualmente
 - 🔍 **Filtrar tareas** por estado: todas, pendientes o completadas
@@ -20,6 +21,9 @@ tareas de forma intuitiva con una interfaz minimalista y responsiva.
 - 📱 **Diseño responsivo** gracias a PicoCSS
 - 🔧 **Composables reutilizables** siguiendo las mejores prácticas de Vue 3
 - 🔐 **Type-safe** con TypeScript estricto
+- 🧪 **Tests unitarios** completos con Vitest y @vue/test-utils
+- 🚀 **CI/CD automatizado** con GitHub Actions
+- 📏 **Linting automático** con ESLint para Vue 3 y TypeScript
 
 ## 🛠️ Stack Tecnológico
 
@@ -35,10 +39,26 @@ tareas de forma intuitiva con una interfaz minimalista y responsiva.
 
 - **[PicoCSS](https://picocss.com/)** (2.1.1) - Framework CSS minimalista y semántico
 
+### Testing
+
+- **[Vitest](https://vitest.dev/)** (4.0.16) - Framework de testing ultrarrápido
+- **[@vue/test-utils](https://test-utils.vuejs.org/)** (2.4.6) - Utilidades oficiales para testing de componentes Vue
+- **[jsdom](https://github.com/jsdom/jsdom)** (27.3.0) - Simulación del DOM para tests
+
+### Code Quality
+
+- **[ESLint](https://eslint.org/)** (9.39.2) - Linter para mantener calidad de código
+- **[@vue/eslint-config-typescript](https://github.com/vuejs/eslint-config-typescript)** (14.6.0) - Configuración de ESLint para Vue + TypeScript
+- **eslint-plugin-vue** (10.6.2) - Reglas específicas para Vue 3
+
 ### Herramientas de Desarrollo
 
-- **vue-tsc** - Type-checking para archivos Vue SFC
-- **@vitejs/plugin-vue** - Plugin oficial de Vue para Vite
+- **vue-tsc** (3.1.4) - Type-checking para archivos Vue SFC
+- **@vitejs/plugin-vue** (6.0.1) - Plugin oficial de Vue para Vite
+
+### CI/CD
+
+- **GitHub Actions** - Pipeline automatizado de integración continua
 
 ## 📋 Requisitos Previos
 
@@ -91,31 +111,44 @@ pnpm preview
 
 ## 📜 Scripts Disponibles
 
-| Comando        | Descripción                                                    |
-| -------------- | -------------------------------------------------------------- |
-| `pnpm dev`     | Inicia el servidor de desarrollo con hot-reload                |
-| `pnpm build`   | Ejecuta type-checking con vue-tsc y genera el build optimizado |
-| `pnpm preview` | Sirve el build de producción localmente para pruebas           |
+| Comando          | Descripción                                                    |
+| ---------------- | -------------------------------------------------------------- |
+| `pnpm dev`       | Inicia el servidor de desarrollo con hot-reload                |
+| `pnpm build`     | Ejecuta type-checking con vue-tsc y genera el build optimizado |
+| `pnpm preview`   | Sirve el build de producción localmente para pruebas           |
+| `pnpm test`      | Ejecuta tests en modo watch (ideal para desarrollo)            |
+| `pnpm test:run`  | Ejecuta tests una sola vez (usado en CI)                       |
+| `pnpm lint`      | Verifica el código con ESLint                                  |
+| `pnpm lint:fix`  | Corrige automáticamente problemas de linting                   |
 
 ## 📁 Estructura del Proyecto
 
 ```
 tasks-app/
-├── public/              # Archivos estáticos
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # Pipeline de GitHub Actions (lint, build, test)
+├── public/                      # Archivos estáticos
 ├── src/
-│   ├── components/      # Componentes Vue
+│   ├── __test__/                # Tests unitarios
+│   │   ├── useTasks.spec.ts    # Tests del composable useTasks (9 tests)
+│   │   └── helpers.ts          # Utilidades para testing (withSetup)
+│   ├── components/              # Componentes Vue
 │   │   ├── TaskForm.vue        # Formulario para crear tareas
-│   │   ├── TaskList.vue        # Lista de tareas con animaciones
+│   │   ├── TaskList.vue        # Lista de tareas con animaciones y edición
 │   │   └── FilterButton.vue    # Botón de filtro reutilizable
-│   ├── composables/     # Composables reutilizables
+│   ├── composables/             # Composables reutilizables
 │   │   └── useTasks.ts         # Lógica de gestión de tareas y persistencia
-│   ├── App.vue          # Componente raíz con UI y filtros
-│   ├── main.ts          # Punto de entrada de la aplicación
-│   └── types.ts         # Definiciones de tipos TypeScript
-├── index.html           # Template HTML
-├── vite.config.ts       # Configuración de Vite
-├── tsconfig.json        # Configuración de TypeScript
-└── package.json         # Dependencias y scripts
+│   ├── App.vue                  # Componente raíz con UI y filtros
+│   ├── main.ts                  # Punto de entrada de la aplicación
+│   ├── types.ts                 # Definiciones de tipos TypeScript
+│   └── style.css                # Estilos globales personalizados
+├── index.html                   # Template HTML
+├── vite.config.ts               # Configuración de Vite
+├── vitest.config.ts             # Configuración de Vitest
+├── eslint.config.js             # Configuración de ESLint (flat config)
+├── tsconfig.json                # Configuración de TypeScript
+└── package.json                 # Dependencias y scripts
 ```
 
 ### Componentes y Composables
@@ -134,7 +167,9 @@ Componente raíz que coordina la interfaz:
 Composable que encapsula toda la lógica de gestión de tareas:
 
 - **Estado reactivo**: Array de tareas con `ref<Task[]>`
-- **CRUD operations**: `addTask()`, `toggleDone()`, `removeTask()`
+- **CRUD operations**: `addTask()`, `toggleDone()`, `removeTask()`, `editTask()`
+- **Validación de entrada**: Verifica que las tareas no estén vacías antes de agregarlas
+- **Generación de IDs únicos**: Usa `crypto.randomUUID()` para identificadores seguros
 - **Computed values**: `totalDone` para el contador de progreso
 - **Persistencia**: Carga y guarda automáticamente en LocalStorage
 - **Manejo de errores**: Try-catch para datos corruptos en localStorage
@@ -150,11 +185,15 @@ Formulario controlado para crear nuevas tareas:
 
 #### `TaskList.vue`
 
-Renderiza la lista de tareas con animaciones:
+Renderiza la lista de tareas con animaciones y funcionalidad de edición:
 
 - Recibe tareas filtradas como props
-- Implementa TransitionGroup para animaciones suaves
-- Emite eventos para toggle y eliminación
+- Implementa TransitionGroup para animaciones suaves (fade + slide, 500ms)
+- **Edición inline**: Doble clic para activar modo edición
+- **Directiva personalizada v-focus**: Autofocus en input de edición
+- **Controles de teclado**: Enter para guardar, Escape para cancelar
+- **Blur handling**: Guarda automáticamente al perder el foco
+- Emite eventos para toggle, eliminación y edición
 
 #### `FilterButton.vue`
 
@@ -218,12 +257,13 @@ La aplicación sigue el patrón de flujo unidireccional de Vue con composables:
 
 ```
 useTasks() composable
-    ↓ (retorna: tasks, addTask, toggleDone, removeTask, totalDone)
+    ↓ (retorna: tasks, addTask, toggleDone, removeTask, editTask, totalDone)
 App.vue
     ↓ props
     ├─→ TaskForm (emite: add-task) → addTask()
     ├─→ FilterButton (emite: set-filter) → actualiza filtro local
-    └─→ TaskList (emite: toggle-done, remove-task) → toggleDone(), removeTask()
+    └─→ TaskList (emite: toggle-done, remove-task, edit-task)
+            → toggleDone(), removeTask(), editTask()
 ```
 
 ### Persistencia Automática
@@ -246,33 +286,147 @@ watch(
 )
 ```
 
-## 🧪 Características Técnicas
+## 🧪 Testing
 
-- **Composition API**: Uso de `<script setup>` para mejor ergonomía
+Este proyecto cuenta con una suite de tests completa para el composable `useTasks`:
+
+### Configuración de Testing
+
+- **Framework**: Vitest con entorno jsdom
+- **Utilidades**: @vue/test-utils para testing de componentes Vue
+- **Helper personalizado**: `withSetup()` para testear composables dentro de un componente
+
+### Cobertura Actual
+
+El archivo [useTasks.spec.ts](src/__test__/useTasks.spec.ts) incluye **9 tests** que verifican:
+
+#### Estado Inicial
+- ✅ Inicializa con un array vacío de tareas
+- ✅ Inicializa totalDone en 0
+
+#### Funcionalidad addTask
+- ✅ Añade tareas correctamente
+- ✅ Las tareas tienen la estructura correcta (id, title, done)
+- ✅ Puede agregar múltiples tareas
+- ✅ No añade tareas con título vacío
+- ✅ Genera IDs únicos para cada tarea
+
+#### Funcionalidad Adicional (Próximamente)
+- ⏳ Tests para `toggleDone()`
+- ⏳ Tests para `removeTask()`
+- ⏳ Tests para `editTask()`
+- ⏳ Tests para `totalDone` computed property
+
+### Ejecutar Tests
+
+```bash
+# Modo watch (recomendado para desarrollo)
+pnpm test
+
+# Ejecución única (usado en CI)
+pnpm test:run
+```
+
+## 🚀 CI/CD
+
+El proyecto cuenta con un pipeline automatizado de GitHub Actions configurado en [.github/workflows/ci.yml](.github/workflows/ci.yml).
+
+### Pipeline de Integración Continua
+
+**Se ejecuta en**:
+- Push a ramas `main` y `dev`
+- Pull requests hacia `main`
+
+**Etapas del pipeline**:
+
+1. **Setup**: Configura Node.js 20 y pnpm con caché de dependencias
+2. **Install**: Instala dependencias con pnpm
+3. **Lint**: Verifica calidad de código con ESLint
+4. **Build**: Ejecuta type-checking y compila la aplicación
+5. **Test**: Ejecuta la suite completa de tests unitarios
+
+Todas las etapas deben completarse exitosamente para que el pipeline pase.
+
+## 📏 Code Quality
+
+### ESLint
+
+El proyecto usa **ESLint 9** con configuración flat (eslint.config.js):
+
+**Plugins activos**:
+- `eslint-plugin-vue` - Reglas específicas para Vue 3
+- `typescript-eslint` - Soporte para TypeScript
+- `@vue/eslint-config-typescript` - Configuración recomendada para Vue + TS
+
+**Comandos**:
+```bash
+# Verificar código
+pnpm lint
+
+# Auto-fix de problemas
+pnpm lint:fix
+```
+
+### TypeScript Strict Mode
+
+El proyecto está configurado con TypeScript en modo estricto:
+
+```json
+{
+  "strict": true,
+  "noUnusedLocals": true,
+  "noUnusedParameters": true,
+  "noFallthroughCasesInSwitch": true,
+  "noUncheckedSideEffectImports": true
+}
+```
+
+Esto garantiza máxima seguridad de tipos y detecta errores en tiempo de compilación.
+
+## 🔧 Características Técnicas
+
+- **Composition API**: Uso de `<script setup>` para mejor ergonomía y tree-shaking
 - **Composables Pattern**: Lógica reutilizable y testeable mediante `useTasks()`
 - **Reactivity System**: `ref()`, `computed()` y `watch()` para reactividad completa
-- **Type Safety**: Props, eventos y composables completamente tipados con TypeScript
-- **Transitions**: Animaciones declarativas con `<TransitionGroup>`
+- **Type Safety**: Props, eventos y composables completamente tipados con TypeScript estricto
+- **Transitions**: Animaciones declarativas con `<TransitionGroup>` (fade + slide, 500ms)
+- **Custom Directives**: `v-focus` para auto-focus en inputs de edición
 - **Event Handling**: Sistema de eventos personalizados tipados
 - **LocalStorage API**: Persistencia automática con manejo de errores robusto
-- **Data Validation**: Validación de datos al cargar desde localStorage
+- **Data Validation**: Validación de entrada y datos cargados desde localStorage
+- **UUID Generation**: IDs únicos con `crypto.randomUUID()`
+- **Unit Testing**: Suite completa con Vitest y @vue/test-utils
+- **Continuous Integration**: Pipeline automatizado con GitHub Actions
+- **Code Linting**: ESLint configurado para Vue 3 + TypeScript
 
-## 📝 Mejoras Futuras
+## 📝 Roadmap de Mejoras
 
-Algunas ideas para extender la funcionalidad:
+### ✅ Completado
 
-- [x] Persistencia de datos (LocalStorage) ✅
-- [x] Composables reutilizables ✅
-- [ ] Edición de tareas existentes
+- [x] Persistencia de datos (LocalStorage)
+- [x] Composables reutilizables
+- [x] Edición de tareas existentes
+- [x] Tests unitarios (Vitest)
+- [x] CI/CD con GitHub Actions
+- [x] Linting con ESLint
+- [x] TypeScript strict mode
+- [x] Validación de entrada
+- [x] Animaciones suaves
+
+### 🔜 Próximas Mejoras
+
+- [ ] Cobertura completa de tests (componentes)
+- [ ] Tests E2E con Playwright
 - [ ] Categorías o etiquetas para tareas
-- [ ] Fechas de vencimiento
+- [ ] Fechas de vencimiento y recordatorios
 - [ ] Drag & drop para reordenar
-- [ ] Sincronización con backend/API
-- [ ] Exportar/Importar tareas (JSON)
-- [ ] Modo oscuro manual
-- [ ] Búsqueda de tareas
+- [ ] Sincronización con backend/API REST
+- [ ] Exportar/Importar tareas (JSON/CSV)
+- [ ] Modo oscuro manual (toggle)
+- [ ] Búsqueda y filtrado avanzado por texto
 - [ ] Estadísticas de productividad
-- [ ] Tests unitarios (Vitest)
+- [ ] Prioridades para tareas
+- [ ] Subtareas anidadas
 
 ## 📄 Licencia
 
@@ -284,9 +438,13 @@ Las contribuciones son bienvenidas. Si deseas mejorar este proyecto:
 
 1. Haz un fork del repositorio
 2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+3. Instala las dependencias (`pnpm install`)
+4. Escribe tests para tu feature
+5. Asegúrate de que los tests pasen (`pnpm test:run`)
+6. Verifica el linting (`pnpm lint`)
+7. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+8. Push a la rama (`git push origin feature/AmazingFeature`)
+9. Abre un Pull Request (el CI se ejecutará automáticamente)
 
 ---
 
