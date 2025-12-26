@@ -6,6 +6,8 @@ export function useTasks() {
   const STORAGE_KEY = 'tasks'
 
   const addTask = (newTask: string) => {
+    if (!newTask.trim()) return
+
     tasks.value.push({
       id: crypto.randomUUID(),
       title: newTask,
