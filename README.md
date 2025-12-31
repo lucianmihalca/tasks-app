@@ -298,24 +298,34 @@ Este proyecto cuenta con una suite de tests completa para el composable `useTask
 
 ### Cobertura Actual
 
-El archivo [useTasks.spec.ts](src/__test__/useTasks.spec.ts) incluye **9 tests** que verifican:
+El archivo [useTasks.spec.ts](src/__test__/useTasks.spec.ts) incluye **16 tests** que verifican todas las funcionalidades del composable:
 
-#### Estado Inicial
+#### Estado Inicial (2 tests)
 - ✅ Inicializa con un array vacío de tareas
-- ✅ Inicializa totalDone en 0
+- ✅ totalDone inicia en 0
 
-#### Funcionalidad addTask
-- ✅ Añade tareas correctamente
-- ✅ Las tareas tienen la estructura correcta (id, title, done)
-- ✅ Puede agregar múltiples tareas
+#### addTask (5 tests)
+- ✅ Añade nuevas tareas
+- ✅ Estructura correcta (id, title, done)
+- ✅ Agrega múltiples tareas
 - ✅ No añade tareas con título vacío
-- ✅ Genera IDs únicos para cada tarea
+- ✅ Genera IDs únicos
 
-#### Funcionalidad Adicional (Próximamente)
-- ⏳ Tests para `toggleDone()`
-- ⏳ Tests para `removeTask()`
-- ⏳ Tests para `editTask()`
-- ⏳ Tests para `totalDone` computed property
+#### toggleDone (2 tests)
+- ✅ Marca tareas como completadas
+- ✅ Desmarca tareas completadas
+
+#### removeTask (2 tests)
+- ✅ Elimina tareas por ID
+- ✅ Elimina solo la tarea correcta
+
+#### editTask (2 tests)
+- ✅ Edita el título de una tarea
+- ✅ Solo cambia el título, no otras propiedades
+
+#### totalDone (2 tests)
+- ✅ Retorna el número correcto de tareas completadas
+- ✅ Retorna 0 cuando no hay tareas completadas
 
 ### Ejecutar Tests
 
@@ -406,7 +416,7 @@ Esto garantiza máxima seguridad de tipos y detecta errores en tiempo de compila
 - [x] Persistencia de datos (LocalStorage)
 - [x] Composables reutilizables
 - [x] Edición de tareas existentes
-- [x] Tests unitarios (Vitest)
+- [x] Tests unitarios completos del composable useTasks (16 tests)
 - [x] CI/CD con GitHub Actions
 - [x] Linting con ESLint
 - [x] TypeScript strict mode
@@ -415,7 +425,7 @@ Esto garantiza máxima seguridad de tipos y detecta errores en tiempo de compila
 
 ### 🔜 Próximas Mejoras
 
-- [ ] Cobertura completa de tests (componentes)
+- [ ] Tests unitarios de componentes Vue
 - [ ] Tests E2E con Playwright
 - [ ] Categorías o etiquetas para tareas
 - [ ] Fechas de vencimiento y recordatorios
